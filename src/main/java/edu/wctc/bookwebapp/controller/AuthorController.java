@@ -6,6 +6,7 @@
 package edu.wctc.bookwebapp.controller;
 
 import edu.wctc.bookwebapp.model.Author;
+import edu.wctc.bookwebapp.model.AuthorDao;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -14,8 +15,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import edu.wctc.bookwebapp.model.AuthorService;
+import edu.wctc.bookwebapp.model.MySqlDbAccessor;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
+
 
 /**
  *
@@ -41,10 +44,16 @@ public class AuthorController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String action = request.getParameter(ACTION_PAR);
         String destination = ALIAS_PAGE;
+        //intaniate the object of authorservice
+        AuthorService as = new AuthorService(new AuthorDao(
+                new MySqlDbAccessor(),
+                "com.mysql.jdbc.Driver", 
+                "jdbc:mysql://localhost:3306/book",
+                "root", "admin1"));
         try {
-            AuthorService au = new AuthorService();
+            //AuthorService au = new AuthorService();
             if(action.equals(ACTION_LIST)){
-                List <Author> authors = au.getAuthorList();
+                List <Author> authors = as.getAuthorList("author", 50);
                 request.setAttribute("authors", authors);
                 destination = ALIAS_PAGE;
             }else{
